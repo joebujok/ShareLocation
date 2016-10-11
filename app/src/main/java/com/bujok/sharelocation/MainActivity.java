@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package com.google.firebase.quickstart.database;
+package com.bujok.sharelocation;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.bujok.sharelocation.R;
 
 
 public class  MainActivity extends BaseActivity {

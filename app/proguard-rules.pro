@@ -25,6 +25,6 @@
     *;
 }
 
--keepclassmembers class com.google.firebase.quickstart.database.models.** {
+-keepclassmembers class com.bujok.sharelocation.models.** {
     *;
 }

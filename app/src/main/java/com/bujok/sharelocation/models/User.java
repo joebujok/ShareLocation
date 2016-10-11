@@ -1,4 +1,4 @@
-package com.google.firebase.quickstart.database.models;
+package com.bujok.sharelocation.models;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
