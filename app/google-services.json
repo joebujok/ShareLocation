@@ -1,0 +1,104 @@
+{
+  "project_info": {
+    "project_number": "439301836625",
+    "firebase_url": "https://sharelocation-27bb8.firebaseio.com",
+    "project_id": "sharelocation-27bb8",
+    "storage_bucket": "sharelocation-27bb8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439301836625:android:7e2fb2c8547aad86",
+        "android_client_info": {
+          "package_name": "com.bujok.sharelocation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "439301836625-t3t00ap1s0idt6e566ua5f5q28toimp0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXRRTb3hVH0_QskV6op9KZwWKicbjKUh8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439301836625:android:5920de3503a2d18c",
+        "android_client_info": {
+          "package_name": "com.google.firebase.quickstart.fcm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "439301836625-t3t00ap1s0idt6e566ua5f5q28toimp0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXRRTb3hVH0_QskV6op9KZwWKicbjKUh8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439301836625:android:fcfef757a832647b",
+        "android_client_info": {
+          "package_name": "com.google.firebase.quickstart.database"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "439301836625-t3t00ap1s0idt6e566ua5f5q28toimp0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXRRTb3hVH0_QskV6op9KZwWKicbjKUh8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
