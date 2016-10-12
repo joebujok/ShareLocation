@@ -24,6 +24,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bujok.sharelocation.models.User;
@@ -36,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -48,6 +51,8 @@ public class  MainActivity extends BaseActivity {
     private FirebaseDatabase mDatabaseReference;
     private DatabaseReference mUserDBRef;
 
+    private ListView mUserListing;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,22 +64,32 @@ public class  MainActivity extends BaseActivity {
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUserListing();;
+                getUserListing();
             }
         });
+
+        mUserListing = (ListView) findViewById(R.id.userListView);
     }
 
     private void getUserListing() {
-
+       final List <String> users = new ArrayList<String>();
         mUserDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e("Count " ,""+dataSnapshot.getChildrenCount());
+
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
                     User u = userSnapshot.getValue(User.class);
+                    users.add(u.username);
                     Log.e(TAG, u.username);
                 }
+                String[] userListArray = users.toArray(new String[users.size()]);
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
+                        android.R.layout.simple_list_item_1, userListArray);
+                mUserListing.setAdapter(adapter);
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
