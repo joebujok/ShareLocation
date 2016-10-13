@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bujok.sharelocation.models.User;
+import com.bujok.sharelocation.models.UserLocationHistory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.bujok.sharelocation.R;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +40,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -50,6 +52,7 @@ public class  MainActivity extends BaseActivity {
     private ViewPager mViewPager;
     private FirebaseDatabase mDatabaseReference;
     private DatabaseReference mUserDBRef;
+    private DatabaseReference mLocationDBRef;
 
     private ListView mUserListing;
 
@@ -59,12 +62,15 @@ public class  MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         mDatabaseReference = FirebaseDatabase.getInstance();
         mUserDBRef = mDatabaseReference.getReference("users");
+        mLocationDBRef = mDatabaseReference.getReference("userLocationHistory");
 
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getUserListing();
+                UserLocationHistory userLocationHistory = new UserLocationHistory(1,100,100, Calendar.getInstance().getTimeInMillis());
+                mLocationDBRef.child(String.valueOf(userLocationHistory.getUserID())).setValue(userLocationHistory);
             }
         });
 
