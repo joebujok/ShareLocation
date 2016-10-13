@@ -35,4 +35,16 @@
         android:layout_marginLeft="18dp"
         android:layout_marginStart="18dp" />
 
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/fab_new_post"
+        android:layout_toStartOf="@+id/fab_new_post"
+        android:layout_marginRight="19dp"
+        android:layout_marginEnd="19dp"
+        android:id="@+id/button2"
+        android:onClick="gotoLocationView"/>
+
 </RelativeLayout>

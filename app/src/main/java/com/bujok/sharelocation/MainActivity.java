@@ -104,6 +104,14 @@ public class  MainActivity extends BaseActivity {
         });
 
     }
+    //called when button is pressed
+    public void gotoLocationView(View view){
+
+        Intent intent = new Intent(this, UserLocationActivity.class);
+        startActivity(intent);
+
+
+    }
 
 
 
