@@ -3,9 +3,7 @@
     package="com.bujok.sharelocation">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -33,6 +31,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.bujok.sharelocation.MainActivity" />
         </activity>
+        <activity android:name=".Main2Activity"></activity>
     </application>
 
 </manifest>
