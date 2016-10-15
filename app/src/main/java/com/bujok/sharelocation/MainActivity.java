@@ -62,15 +62,15 @@ public class  MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         mDatabaseReference = FirebaseDatabase.getInstance();
         mUserDBRef = mDatabaseReference.getReference("users");
-        mLocationDBRef = mDatabaseReference.getReference("userLocationHistory");
+        mLocationDBRef = mDatabaseReference.getReference("userTesting");
 
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getUserListing();
-                UserLocationHistory userLocationHistory = new UserLocationHistory(1,100,100, Calendar.getInstance().getTimeInMillis());
-                mLocationDBRef.child(String.valueOf(userLocationHistory.getUserID())).setValue(userLocationHistory);
+                //UserLocationHistory userLocationHistory = new UserLocationHistory(1,100,100, Calendar.getInstance().getTimeInMillis());
+                //mLocationDBRef.child(String.valueOf(userLocationHistory.getUserID())).setValue(userLocationHistory);
             }
         });
 
