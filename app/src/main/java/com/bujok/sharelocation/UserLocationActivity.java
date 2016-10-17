@@ -3,6 +3,7 @@ package com.bujok.sharelocation;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,9 +12,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bujok.sharelocation.models.User;
 import com.bujok.sharelocation.models.UserLocationHistory;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -25,11 +28,23 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 public class UserLocationActivity extends AppCompatActivity implements
@@ -86,6 +101,11 @@ public class UserLocationActivity extends AppCompatActivity implements
     private FirebaseDatabase mDatabaseReference;
     private DatabaseReference mUserLocationHistoryRef;
 
+    private List<UserLocationHistory> mLast5LocationList = new LinkedList<>();
+    private Hashtable<String, List<UserLocationHistory>> usersLocationData = new Hashtable<String, List<UserLocationHistory>>();
+    private Hashtable<String, String> usersNames = new Hashtable<String, String>();
+
+
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -141,6 +161,65 @@ public class UserLocationActivity extends AppCompatActivity implements
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        populateUserLocationData();
+    }
+
+    private void populateUserLocationData() {
+       mDatabaseReference.getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(DataSnapshot dataSnapshot) {
+               usersNames.clear();
+
+               for(DataSnapshot ds : dataSnapshot.getChildren()){
+                   User u = ds.getValue(User.class);
+                   usersNames.put(ds.getKey(),u.username) ;
+
+               }
+               //got all the UIDs, now query the last 5 locations for each one
+
+               for(final Map.Entry<String,String> entry : usersNames.entrySet()){
+
+                   Query last5LocationsQuery = mUserLocationHistoryRef.child(entry.getKey())
+                           .orderByChild("time").limitToLast(5);
+
+                   last5LocationsQuery.addValueEventListener(new ValueEventListener() {
+                       @Override
+                       public void onDataChange(DataSnapshot dataSnapshot) {
+                           List<UserLocationHistory> userLast5LocationList = new LinkedList<>();
+                           for (DataSnapshot userLocation : dataSnapshot.getChildren()) {
+                               userLast5LocationList.add(userLocation.getValue(UserLocationHistory.class));
+                           }
+                           Log.d(TAG, "read the latest 5 values from the database for user ." + entry.getKey());
+                           if(userLast5LocationList.size()>0){
+                               UserLocationHistory ulh = userLast5LocationList.get(userLast5LocationList.size()-1);
+
+                               SimpleDateFormat sdf = new SimpleDateFormat(getString(R.string.datetimeformat));
+                               String currentTime = sdf.format(new Date(ulh.getTime()));
+                               mMap.addMarker(new MarkerOptions()
+                                       .position(new LatLng(ulh.getLat(),ulh.getLng()))
+                                       .title(usersNames.get(ulh.getUserUID()) + " - " + currentTime));
+                               usersLocationData.put(entry.getKey(),userLast5LocationList);
+                           }
+
+                       }
+
+                       @Override
+                       public void onCancelled(DatabaseError databaseError) {
+
+                       }
+                       // TODO: implement the ChildEventListener methods as documented above
+                       // ...
+                   });
+               }
+               Log.d(TAG, "Successfully retrieved users last 5 locations");
+
+           }
+
+           @Override
+           public void onCancelled(DatabaseError databaseError) {
+
+           }
+       });
     }
 
     /**
@@ -240,6 +319,10 @@ public class UserLocationActivity extends AppCompatActivity implements
             setButtonsEnabledState();
             stopLocationUpdates();
         }
+    }
+
+    public void startFollowingFriends(View view) {
+        followAllFriends();
     }
 
     /**
@@ -439,10 +522,44 @@ public class UserLocationActivity extends AppCompatActivity implements
 
     private void saveLocationToDatabase(Location location) {
         String UserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        UserLocationHistory ulh = new UserLocationHistory(location.getAccuracy(),location.getAltitude(),location.getBearing(),location.getLongitude(),location.getLatitude(),location.getSpeed(),location.getTime(),UserID);
+        UserLocationHistory ulh = new UserLocationHistory(location.getAccuracy(),location.getAltitude(),location.getBearing(),location.getLatitude(),location.getLongitude(),location.getSpeed(),location.getTime(),UserID);
         Map<String,Object> postValues = ulh.toMap();
         String key = mUserLocationHistoryRef.child(UserID).push().getKey();
         mUserLocationHistoryRef.child(UserID).child(key).setValue(postValues);
+
+    }
+
+
+
+    private void followAllFriends(){
+        ValueEventListener locationUpdateListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot userLocation :  dataSnapshot.getChildren()){
+                    for(DataSnapshot user : userLocation.getChildren()){
+                        UserLocationHistory ulh = user.getValue(UserLocationHistory.class);
+                       // mMap.addMarker(new MarkerOptions()
+                           //     .position(new LatLng(ulh.getLat(), ulh.getLng()))
+//
+                            //    .title(ulh.getUserUID()));
+                    }
+
+
+
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+
+
+        mUserLocationHistoryRef.addValueEventListener(locationUpdateListener);
 
     }
 
