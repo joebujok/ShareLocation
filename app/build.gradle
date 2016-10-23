@@ -25,9 +25,15 @@ android {
 configurations.all {
     resolutionStrategy.force 'com.android.support:support-annotations:24.2.1'
 }
+repositories {
+    mavenCentral()
+}
 
 dependencies {
     testCompile 'junit:junit:4.12'
+
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.android.support:cardview-v7:24.2.1'

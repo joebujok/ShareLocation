@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -32,9 +34,14 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private Button mSignInButton;
     private Button mSignUpButton;
 
+    private CallbackManager callbackManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        callbackManager = CallbackManager.Factory.create();
+
+
         setContentView(R.layout.activity_sign_in);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -49,6 +56,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         // Click listeners
         mSignInButton.setOnClickListener(this);
         mSignUpButton.setOnClickListener(this);
+
+
     }
 
     @Override
