@@ -38,6 +38,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -74,7 +77,35 @@ public class  MainActivity extends BaseActivity {
             }
         });
 
+        findViewById(R.id.sendUpstreamMessage).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseMessaging fm = FirebaseMessaging.getInstance();
+                fm.send(new RemoteMessage.Builder( "sharelocation-27bb8" + "@gcm.googleapis.com")
+                        .setMessageId(Integer.toString(msgId.incrementAndGet()))
+                        .addData("my_message", "Hello World")
+                        .addData("my_action","SAY_HELLO")
+                        .add
+                        .build());
+            }
+        });
+
         mUserListing = (ListView) findViewById(R.id.userListView);
+
+        //get GCM token
+        // Get token
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        // Log and toast
+        String msg = getString(R.string.msg_token_fmt, token);
+        Log.d(TAG, msg);
+        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+        /// this needs removing, this is handled in other code in myfirebaseinstanceservice.
+        String UserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("users").child(UserID).child("fcmToken").setValue(token);
+
     }
 
     private void getUserListing() {

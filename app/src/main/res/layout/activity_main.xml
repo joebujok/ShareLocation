@@ -28,7 +28,7 @@
     <ListView
         android:id="@+id/userListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="50%"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -46,5 +46,14 @@
         android:layout_marginEnd="19dp"
         android:id="@+id/button2"
         android:onClick="gotoLocationView"/>
+
+    <Button
+        android:text="Send Upstream Message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sendUpstreamMessage"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
