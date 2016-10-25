@@ -16,11 +16,13 @@
 
 package com.bujok.sharelocation;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.bujok.sharelocation.backendcomms.ServletPostAsyncTask;
 import com.bujok.sharelocation.models.User;
 import com.bujok.sharelocation.models.UserLocationHistory;
 import com.google.firebase.auth.FirebaseAuth;
@@ -80,13 +83,7 @@ public class  MainActivity extends BaseActivity {
         findViewById(R.id.sendUpstreamMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseMessaging fm = FirebaseMessaging.getInstance();
-                fm.send(new RemoteMessage.Builder( "sharelocation-27bb8" + "@gcm.googleapis.com")
-                        .setMessageId(Integer.toString(msgId.incrementAndGet()))
-                        .addData("my_message", "Hello World")
-                        .addData("my_action","SAY_HELLO")
-                        .add
-                        .build());
+                new ServletPostAsyncTask().execute(new Pair<Context, String>(MainActivity.this, "Manfred"));
             }
         });
 
