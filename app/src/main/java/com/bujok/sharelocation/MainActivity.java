@@ -16,37 +16,38 @@
 
 package com.bujok.sharelocation;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bujok.sharelocation.backendcomms.ServletPostAsyncTask;
+import com.bujok.sharelocation.dialogs.ConfirmLocRequestDialogFragment;
 import com.bujok.sharelocation.models.User;
-import com.bujok.sharelocation.models.UserLocationHistory;
+import com.bujok.sharelocation.ui.adapters.UsersAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.bujok.sharelocation.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -61,6 +62,7 @@ public class  MainActivity extends BaseActivity {
     private DatabaseReference mLocationDBRef;
 
     private ListView mUserListing;
+    private String appFCMid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,30 +85,35 @@ public class  MainActivity extends BaseActivity {
         findViewById(R.id.sendUpstreamMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ServletPostAsyncTask().execute(new Pair<Context, String>(MainActivity.this, "Manfred"));
+
             }
         });
 
         mUserListing = (ListView) findViewById(R.id.userListView);
 
+
+
         //get GCM token
         // Get token
-        String token = FirebaseInstanceId.getInstance().getToken();
+        appFCMid = FirebaseInstanceId.getInstance().getToken();
 
         // Log and toast
-        String msg = getString(R.string.msg_token_fmt, token);
+        String msg = getString(R.string.msg_token_fmt, appFCMid);
         Log.d(TAG, msg);
         Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
 
         /// this needs removing, this is handled in other code in myfirebaseinstanceservice.
         String UserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("users").child(UserID).child("fcmToken").setValue(token);
+        databaseReference.child("users").child(UserID).child("fcmToken").setValue(appFCMid);
+
+
 
     }
 
     private void getUserListing() {
        final List <String> users = new ArrayList<String>();
+        final ArrayList<User> arrayOfUsers = new ArrayList<User>();
         mUserDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -114,14 +121,38 @@ public class  MainActivity extends BaseActivity {
 
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
                     User u = userSnapshot.getValue(User.class);
+                    arrayOfUsers.add(u);
                     users.add(u.username);
                     Log.e(TAG, u.username);
                 }
-                String[] userListArray = users.toArray(new String[users.size()]);
+               // User[] userListArray = users.toArray(new User[users.size()]);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
-                        android.R.layout.simple_list_item_1, userListArray);
+
+                UsersAdapter adapter = new UsersAdapter(MainActivity.this, arrayOfUsers);
                 mUserListing.setAdapter(adapter);
+                mUserListing.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                            long arg3) {
+                        // TODO Auto-generated method stub
+                        User u = (User) arg0.getAdapter().getItem(arg2);
+                        Log.d("############","Items " );
+
+                        ConfirmLocRequestDialogFragment confirmDialog = new ConfirmLocRequestDialogFragment();
+                        Bundle args = new Bundle();
+                        args.putString("sender", u.fcmToken);
+                        args.putString("receiver",appFCMid );
+                        confirmDialog.setArguments(args);
+                        confirmDialog.show(getSupportFragmentManager(),"ConfirmFragmentDialog");
+
+
+                       // ConfirmLocRequestDialogFragment confirmDialog = new ConfirmLocRequestDialogFragment();
+                       // confirmDialog.show(getSupportFragmentManager(),"ConfirmFragmentDialog");
+
+                    }
+
+                });;
             }
 
 
@@ -141,7 +172,29 @@ public class  MainActivity extends BaseActivity {
 
     }
 
+/*    public static class ConfirmLocRequestDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.dialog_sendLocationRequestToUser)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Pair<Context, String> senderData  = new Pair<Context, String>(getContext(), appFCMid) ;
+                            Pair<Context, String> receeiverData  = new Pair<Context, String>(getContext(), "Manfred") ;
 
+                            new ServletPostAsyncTask().execute(senderData,receeiverData);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+    }*/
 
 
     @Override

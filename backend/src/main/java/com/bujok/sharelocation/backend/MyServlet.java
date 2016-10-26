@@ -50,8 +50,13 @@ public class MyServlet extends HttpServlet {
         JSONObject notification = new JSONObject();
         notification.put("title", "Java");
         notification.put("body", "Notificação do Java");
-
+        //two types of message
+       // message.put("notification", notification);
         message.put("notification", notification);
+
+        JSONObject data = new JSONObject();
+        data.put("sampleAppSpecificData" , "Joe Test");
+        message.put("data",data);
 
         post.setEntity(new StringEntity(message.toString(), "UTF-8"));
         HttpResponse response = client.execute(post);

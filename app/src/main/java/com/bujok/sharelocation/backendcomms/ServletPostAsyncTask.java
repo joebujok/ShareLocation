@@ -31,8 +31,8 @@ public class ServletPostAsyncTask extends AsyncTask<Pair<Context, String>, Void,
     @Override
     protected String doInBackground(Pair<Context, String>... params) {
         context = params[0].first;
-        String name = params[0].second;
-
+        String authUserIDSendingLocationRequest = params[0].second;
+        String authUserIDReceivingLocationRequest = params[1].second;
         try {
             // Set up the request
             URL url = new URL("http://10.0.2.2:8080/hello");
@@ -43,7 +43,8 @@ public class ServletPostAsyncTask extends AsyncTask<Pair<Context, String>, Void,
 
             // Build name data request params
             Map<String, String> nameValuePairs = new HashMap<>();
-            nameValuePairs.put("name", name);
+            nameValuePairs.put("authUserIDSendingLocationRequest", authUserIDSendingLocationRequest);
+            nameValuePairs.put("authUserIDReceivingLocationRequest", authUserIDReceivingLocationRequest);
             String postParams = buildPostDataString(nameValuePairs);
 
             // Execute HTTP Post

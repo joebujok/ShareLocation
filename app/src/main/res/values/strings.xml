@@ -29,4 +29,7 @@
     <string name="datetimeformat">dd-MM-yyyy\' \'HH:mm:ss</string>
     <string name="facebook_app_id">550041175198729</string>
     <string name="msg_token_fmt">InstanceID Token: %s</string>
+    <string name="dialog_sendLocationRequestToUser">Send Location Request to user</string>
+    <string name="yes">yes</string>
+    <string name="cancel">cancel</string>
 </resources>
